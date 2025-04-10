@@ -82,7 +82,7 @@ def run_outro():
 run_intro()
 
 print("[*] OPENING...... [*]")
-t.sleep(2)
+time.sleep(2)
 
 print("\n[*] 1. Create a Backdoor  [*]\n")
 print ("\n [*] 2. phishing tool (under devolpment not finished)")
