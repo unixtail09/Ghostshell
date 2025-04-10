@@ -1,6 +1,6 @@
 # created by unixtail09 
 import subprocess
-import time as t
+import time 
 import os
 import random
 import sys
@@ -38,7 +38,7 @@ def run_intro():
 ╚═════╝░░╚═════╝░╚═╝░░╚══╝╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝╚══════╝
                 💻 Coded by UnixTail 💻
     """)
-    t.sleep(2)
+    time.sleep(2)
 
 def loading_animation(msg="Creating Payload"):
     done = False
