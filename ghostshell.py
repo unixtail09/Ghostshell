@@ -27,7 +27,7 @@ def matrix_rain(text="Created by UnixTail", duration=5):
 def run_intro():
     clear()
     matrix_rain("Created by UnixTail", duration=3)
-    t.sleep(1)
+    time.sleep(1)
     clear()
     print("""
 ██████╗░██╗░░░██╗███╗░░██╗██╗██╗░░██╗████████╗░█████╗░██╗██╗░░░░░
